@@ -32,7 +32,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users getUser(String userId) {
-        return userRepo.findById(userId)
+        Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceException("User not found with id " + userId));
+        // http://localhost:8083/rating/user/{userId}
+
+        return user ;
     }
 }
