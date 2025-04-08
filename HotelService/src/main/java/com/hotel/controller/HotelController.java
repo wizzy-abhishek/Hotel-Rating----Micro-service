@@ -34,4 +34,9 @@ public class HotelController {
     public ResponseEntity<List<Hotel>> getAllHotel(){
         return ResponseEntity.ok(hotelService.getAllHotel());
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Hotel>> getHotelByUserId(@PathVariable String userId){
+        return ResponseEntity.ok(hotelService.getHotelByUserId(userId));
+    }
 }

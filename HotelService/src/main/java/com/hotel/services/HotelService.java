@@ -11,4 +11,6 @@ public interface HotelService {
     List<Hotel> getAllHotel();
 
     Hotel getHotelById(String hotelId);
+
+    List<Hotel> getHotelByUserId(String userId);
 }

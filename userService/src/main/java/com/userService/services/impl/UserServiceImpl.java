@@ -1,33 +1,34 @@
 package com.userService.services.impl;
 
-import com.userService.entities.Rating;
+import com.userService.entities.Hotel;
 import com.userService.entities.Users;
 import com.userService.exceptions.ResourceException;
 import com.userService.repo.UserRepo;
 import com.userService.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Value("${GET_HOTEL_BY_USER_ID_API}")
+    private String GET_HOTEL_BY_USER_ID_API ;
+
     private final UserRepo userRepo;
-    private final RestTemplate restTemplate ;
+    private final RestClient restClient ;
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     public UserServiceImpl(UserRepo userRepo,
-                           RestTemplate restTemplate) {
+                          RestClient restClient) {
         this.userRepo = userRepo;
-        this.restTemplate = restTemplate;
+        this.restClient = restClient;
     }
 
     @Override
@@ -39,7 +40,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Users> getAllUser() {
-        return userRepo.findAll();
+        List<Users> users = userRepo.findAll();
+
+        users.forEach(user -> {
+            ParameterizedTypeReference<List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
+
+            List<Hotel> hotelsByUser = restClient.get()
+                    .uri(GET_HOTEL_BY_USER_ID_API + user.getUserId())
+                    .retrieve()
+                    .body(responseType);
+
+            user.setHotelsRated(hotelsByUser);
+        });
+
+        return users;
     }
 
     @Override
@@ -47,19 +61,15 @@ public class UserServiceImpl implements UserService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceException("User not found with id " + userId));
 
-        // http://localhost:8083/rating/user/{userId}
-        String url = "http://localhost:8083/rating/user/" + userId;
+        ParameterizedTypeReference<List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
+        List<Hotel> hotels = restClient.get()
+                .uri(GET_HOTEL_BY_USER_ID_API + user.getUserId())
+                .retrieve()
+                .body(responseType);
 
-        ResponseEntity<List<Rating>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Rating>>() {});
+        user.setHotelsRated(hotels);
 
-        List<Rating> ratings = response.getBody();
 
-        logger.info("Ratings fetched: {}", ratings);
-        user.setRatings(ratings);
         return user ;
     }
 }

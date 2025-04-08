@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyToOne;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,8 @@ public class Users {
 
     private String about ;
 
+    @Lazy
     @Transient
-    private List<Rating> ratings = new ArrayList<>() ;
+    private List<Hotel> hotelsRated = new ArrayList<>() ;
 
 }

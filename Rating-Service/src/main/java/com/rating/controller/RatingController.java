@@ -1,7 +1,6 @@
 package com.rating.controller;
 
 import com.rating.entities.Rating;
-import com.rating.entities.RatingWithHotel;
 import com.rating.services.RatingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +25,17 @@ public class RatingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RatingWithHotel>> getAllRating(){
+    public ResponseEntity<List<Rating>> getAllRating(){
         return ResponseEntity.ok(ratingService.getAllRating());
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RatingWithHotel>> getAllRatingByUserId(@PathVariable String userId){
+    public ResponseEntity<List<Rating>> getAllRatingByUserId(@PathVariable String userId){
         return ResponseEntity.ok(ratingService.getAllRatingByUserId(userId));
     }
 
     @GetMapping("/hotel/{hotelId}")
-    public ResponseEntity<List<RatingWithHotel>> getAllRatingByHotelId(@PathVariable String hotelId){
+    public ResponseEntity<List<Rating>> getAllRatingByHotelId(@PathVariable String hotelId){
         return ResponseEntity.ok(ratingService.getAllRatingByHotelId(hotelId));
     }
 
