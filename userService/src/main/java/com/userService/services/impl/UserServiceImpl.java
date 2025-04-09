@@ -50,6 +50,8 @@ public class UserServiceImpl implements UserService {
                     .retrieve()
                     .body(responseType);
 
+            logger.info("Method : getAllUser\n Get_hotel_api_call : {}", hotelsByUser);
+
             user.setHotelsRated(hotelsByUser);
         });
 
@@ -69,6 +71,7 @@ public class UserServiceImpl implements UserService {
 
         user.setHotelsRated(hotels);
 
+        logger.info("Method : getUser\n Get_hotel_api_call : {}", hotels);
 
         return user ;
     }

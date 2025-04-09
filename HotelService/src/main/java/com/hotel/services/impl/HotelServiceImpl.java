@@ -5,6 +5,8 @@ import com.hotel.entities.Ratings;
 import com.hotel.exception.ResourceException;
 import com.hotel.repo.HotelRepo;
 import com.hotel.services.HotelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class HotelServiceImpl implements HotelService {
 
     private final HotelRepo hotelRepo ;
     private final RestClient restClient ;
+    private final Logger logger = LoggerFactory.getLogger("Hotel Service Impl");
 
     public HotelServiceImpl(HotelRepo hotelRepo, RestClient restClient) {
         this.hotelRepo = hotelRepo;
@@ -58,6 +61,8 @@ public class HotelServiceImpl implements HotelService {
                                     .retrieve()
                                     .body(responseType);
 
+                            logger.info("Method name : getAllHotel\n Rating's {}", ratingOfAHotel);
+
                             hotelsRating.setRatings(ratingOfAHotel);
                         }).toList();
     }
@@ -73,6 +78,8 @@ public class HotelServiceImpl implements HotelService {
                 .uri(GET_RATING_BY_HOTEl_ID + hotel.getHotelId())
                 .retrieve()
                 .body(responseType);
+
+        logger.info("Method name : getHotelById\n Rating's {}", ratingOfAHotel);
 
         hotel.setRatings(ratingOfAHotel);
 
@@ -91,6 +98,8 @@ public class HotelServiceImpl implements HotelService {
         List<String> hotelsId = ratingsByUser.stream()
                 .map(Ratings::hotelId)
                 .toList();
+
+        logger.info("Method name : getHotelByUserId\n HotelId's {}", hotelsId);
 
         List<Hotel> hotels = hotelRepo.findAllById(hotelsId);
 
