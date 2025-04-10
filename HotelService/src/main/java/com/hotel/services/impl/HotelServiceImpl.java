@@ -31,9 +31,9 @@ public class HotelServiceImpl implements HotelService {
     private final RestClient restClient ;
     private final Logger logger = LoggerFactory.getLogger("Hotel Service Impl");
 
-    public HotelServiceImpl(HotelRepo hotelRepo, RestClient restClient) {
+    public HotelServiceImpl(HotelRepo hotelRepo, RestClient.Builder builder) {
         this.hotelRepo = hotelRepo;
-        this.restClient = restClient;
+        this.restClient = builder.build();
     }
 
     @Override

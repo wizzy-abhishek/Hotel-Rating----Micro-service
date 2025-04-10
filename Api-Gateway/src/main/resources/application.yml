@@ -1,13 +1,9 @@
-server:
-  port: 8089
-
 spring:
   application:
-    name: RATING-SERVICE
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017
-      database: microservice-rating
+    name: API-GATEWAY
+
+server:
+  port: 8084
 
 eureka:
   instance:

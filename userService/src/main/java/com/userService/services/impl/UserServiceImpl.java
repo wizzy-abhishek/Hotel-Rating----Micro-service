@@ -1,5 +1,6 @@
 package com.userService.services.impl;
 
+import com.userService.client.HotelClient;
 import com.userService.entities.Hotel;
 import com.userService.entities.Users;
 import com.userService.exceptions.ResourceException;
@@ -24,11 +25,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final RestClient restClient ;
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final HotelClient hotelClient ;
 
     public UserServiceImpl(UserRepo userRepo,
-                          RestClient restClient) {
+                           RestClient.Builder builder, HotelClient hotelClient) {
         this.userRepo = userRepo;
-        this.restClient = restClient;
+        this.restClient = builder.build();
+        this.hotelClient = hotelClient;
     }
 
     @Override
@@ -40,15 +43,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Users> getAllUser() {
+
         List<Users> users = userRepo.findAll();
 
         users.forEach(user -> {
-            ParameterizedTypeReference<List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
 
-            List<Hotel> hotelsByUser = restClient.get()
+            // ff<List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
+
+            List<Hotel> hotelsByUser = hotelClient.getHotelByUserId(user.getUserId());
+
+                    /* restClient.get()
                     .uri(GET_HOTEL_BY_USER_ID_API + user.getUserId())
                     .retrieve()
                     .body(responseType);
+                    */
 
             logger.info("Method : getAllUser\n Get_hotel_api_call : {}", hotelsByUser);
 
@@ -63,11 +71,15 @@ public class UserServiceImpl implements UserService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceException("User not found with id " + userId));
 
-        ParameterizedTypeReference<List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
-        List<Hotel> hotels = restClient.get()
+        // ParameterizedTypeReference<List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
+
+        List<Hotel> hotels = hotelClient.getHotelByUserId(user.getUserId());
+
+                /* restClient.get()
                 .uri(GET_HOTEL_BY_USER_ID_API + user.getUserId())
                 .retrieve()
                 .body(responseType);
+                */
 
         user.setHotelsRated(hotels);
 
