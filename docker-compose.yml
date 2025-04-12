@@ -1,0 +1,126 @@
+services:
+  psql-hotel-service:
+    container_name: psql-hotel
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: GABAR@291816
+      POSTGRES_DB: microservice_hotel_service
+    volumes:
+      - hotel-db:/var/lib/postgresql/data
+    networks:
+      - hotel-net
+
+  psql-user-service:
+    container_name: psql-hotel-user
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: GABAR@291816
+      POSTGRES_DB: microservice_user_service
+    volumes:
+      - hotel-user-db:/var/lib/postgresql/data
+    networks:
+      - hotel-net
+
+  mongo-rating-service:
+    container_name: mongo-hotel-rating
+    image: mongo
+    volumes:
+      - hotel-rating-db:/data/db
+    networks:
+      - hotel-net
+
+  CONFIG-SERVER:
+    container_name: CONFIG-SERVER
+    build: ./CONFIG-SERVER
+    image: hotel_config_server:latest
+    depends_on:
+      - SERVICE-REGISTRY
+    ports:
+      - "8080:8080"
+    networks:
+      - hotel-net
+
+  SERVICE-REGISTRY:
+    container_name: SERVICE-REGISTRY
+    build: ./Service-Registry
+    image: hotel_service_registry:latest
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=SERVICE-REGISTRY
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://CONFIG-SERVER:8080
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8761:8761"
+    networks:
+      - hotel-net
+
+  API-GATEWAY:
+    container_name: API-GATEWAY
+    build: ./Api-Gateway
+    image: hotel_api_gateway:latest
+    ports:
+      - "8084:8084"
+    networks:
+      - hotel-net
+    depends_on:
+      - SERVICE-REGISTRY
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://CONFIG-SERVER:8080
+      - SPRING_PROFILES_ACTIVE=dev
+
+  HOTEL-SERVICE:
+    container_name: HOTEL-SERVICE
+    build: ./HotelService
+    image: hotel_service_ms:latest
+    depends_on:
+      - API-GATEWAY
+      - CONFIG-SERVER
+      - SERVICE-REGISTRY
+      - psql-hotel-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-hotel-service:5432/microservice_hotel_service
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=GABAR@291816
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://CONFIG-SERVER:8080
+      - SPRING_PROFILES_ACTIVE=dev
+
+  RATING-SERVICE:
+    container_name: RATING-SERVICE
+    build: ./Rating-Service
+    image: rating_service_ms:latest
+    depends_on:
+      - API-GATEWAY
+      - CONFIG-SERVER
+      - SERVICE-REGISTRY
+      - mongo-rating-service
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo-rating-service:27017
+      - SPRING_DATA_MONGODB_DATABASE=mongo-hotel-rating
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://CONFIG-SERVER:8080
+      - SPRING_PROFILES_ACTIVE=dev
+
+  USER-SERVICE:
+    container_name: USER-SERVICE
+    build: ./userService
+    image: user_service_ms:latest
+    depends_on:
+      - API-GATEWAY
+      - CONFIG-SERVER
+      - SERVICE-REGISTRY
+      - psql-user-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-user-service:5432/microservice_user_service
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=GABAR@291816
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://CONFIG-SERVER:8080
+      - SPRING_PROFILES_ACTIVE=dev
+
+volumes:
+  hotel-db:
+  hotel-user-db:
+  hotel-rating-db:
+
+networks:
+  hotel-net:
+    driver: bridge
