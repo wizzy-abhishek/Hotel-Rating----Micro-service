@@ -1,4 +1,5 @@
 services:
+
   psql-hotel-service:
     container_name: psql-hotel
     image: postgres
@@ -11,13 +12,15 @@ services:
     networks:
       - hotel-net
 
-  psql-user-service:
+  psqlUserService:
     container_name: psql-hotel-user
     image: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: GABAR@291816
       POSTGRES_DB: microservice_user_service
+    ports:
+      - "5432:5432"
     volumes:
       - hotel-user-db:/var/lib/postgresql/data
     networks:
@@ -26,6 +29,8 @@ services:
   mongo-rating-service:
     container_name: mongo-hotel-rating
     image: mongo
+    ports:
+      - "27017:27017"   # Not good practice
     volumes:
       - hotel-rating-db:/data/db
     networks:
@@ -48,8 +53,8 @@ services:
     image: hotel_service_registry:latest
     environment:
       - EUREKA_INSTANCE_HOSTNAME=SERVICE-REGISTRY
-      - SPRING_CONFIG_IMPORT=optional:configserver:http://CONFIG-SERVER:8080
-      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
     ports:
       - "8761:8761"
     networks:
@@ -66,7 +71,7 @@ services:
     depends_on:
       - SERVICE-REGISTRY
     environment:
-      - SPRING_CONFIG_IMPORT=optional:configserver:http://CONFIG-SERVER:8080
+      - SPRING_CONFIG_IMPORT= optional:configserver:http://CONFIG-SERVER:8080
       - SPRING_PROFILES_ACTIVE=dev
 
   HOTEL-SERVICE:
@@ -108,7 +113,7 @@ services:
       - API-GATEWAY
       - CONFIG-SERVER
       - SERVICE-REGISTRY
-      - psql-user-service
+      - psqlUserService
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-user-service:5432/microservice_user_service
       - SPRING_DATASOURCE_USERNAME=postgres
