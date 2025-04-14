@@ -12,6 +12,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -27,13 +28,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
     private final RestClient restClient ;
+    private final DiscoveryClient discoveryClient ;
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final HotelClient hotelClient ;
 
     public UserServiceImpl(UserRepo userRepo,
-                           RestClient.Builder builder, HotelClient hotelClient) {
+                           RestClient.Builder builder, DiscoveryClient discoveryClient, HotelClient hotelClient) {
         this.userRepo = userRepo;
         this.restClient = builder.build();
+        this.discoveryClient = discoveryClient;
         this.hotelClient = hotelClient;
     }
 
