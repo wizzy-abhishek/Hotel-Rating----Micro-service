@@ -5,6 +5,8 @@ import com.hotel.entities.Ratings;
 import com.hotel.exception.ResourceException;
 import com.hotel.repo.HotelRepo;
 import com.hotel.services.HotelService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,14 +39,22 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    @RateLimiter(name = "writeOpsRateLimiter" , fallbackMethod = "writeOpsFallBack")
     public Hotel createHotel(Hotel hotel) {
         String hotelId = UUID.randomUUID().toString() ;
         hotel.setHotelId(hotelId);
         return hotelRepo.save(hotel);
     }
 
+    public Hotel writeOpsFallBack(Hotel hotel , Throwable throwable){
+        logger.error("Error in writing ops, rate limiter came in picture ");
+        return new Hotel();
+    }
+
     @Override
-    public List<Hotel> getAllHotel() {
+    @CircuitBreaker(name = "getAllHotelCB" ,
+            fallbackMethod = "getAllHotelFB")
+    public List<Hotel> getAllHotel(){
 
         List<Hotel> hotels = hotelRepo.findAll();
 
@@ -67,6 +77,11 @@ public class HotelServiceImpl implements HotelService {
                         }).toList();
     }
 
+    public List<Hotel> getAllHotelFB(Throwable throwable){
+        logger.error("Circuit breaker called for getAllHotel \n Cause : {}" , throwable.getMessage());
+        return List.of();
+    }
+
     @Override
     public Hotel getHotelById(String hotelId) {
         Hotel hotel =  hotelRepo.findById(hotelId)
@@ -87,6 +102,8 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    @CircuitBreaker(name = "getHotelByUserIdCB"
+            , fallbackMethod = "getHotelByUserIdFB")
     public List<Hotel> getHotelByUserId(String userId) {
 
         ParameterizedTypeReference<List<Ratings>> responseType = new ParameterizedTypeReference<>() {};
@@ -112,5 +129,10 @@ public class HotelServiceImpl implements HotelService {
         });
 
         return hotels ;
+    }
+
+    public List<Hotel> getHotelByUserIdFB(String userId , Throwable throwable){
+        logger.error("Circuit breaker called while calling hotel of user-id : {} \nError {}" , userId , throwable.getMessage());
+        return List.of();
     }
 }

@@ -7,6 +7,7 @@ import com.userService.exceptions.ResourceException;
 import com.userService.repo.UserRepo;
 import com.userService.services.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +38,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @RateLimiter(name = "writeOpsRateLimiter" , fallbackMethod = "writeOpsFallBack")
     public Users saveUser(Users user) {
         String uniqueId = UUID.randomUUID().toString() ;
         user.setUserId(uniqueId);
         return userRepo.save(user);
     }
 
+    public Users writeOpsFallBack(Users user , Throwable throwable){
+        logger.error("Error in writing ops, rate limiter came in picture ");
+        return new Users();
+    }
+
+
     @Override
- //   @Retry(name = "getAllUserRetry")
     @CircuitBreaker(name = "getAllUserCircuitBreaker" , fallbackMethod = "getAllUserFallBackCB")
     public List<Users> getAllUser() {
         logger.info("get all user called");
@@ -76,6 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CircuitBreaker(name ="getUserCB" , fallbackMethod = "getUserFB")
     public Users getUser(String userId) {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceException("User not found with id " + userId));
@@ -95,5 +103,10 @@ public class UserServiceImpl implements UserService {
         logger.info("Method : getUser\n Get_hotel_api_call : {}", hotels);
 
         return user ;
+    }
+
+    public Users getUserFB(String userId , Throwable throwable) {
+        logger.error("getUser method not responded while calling for user-id : {} \n came error {}" , userId , throwable.getMessage());
+        return new Users();
     }
 }
