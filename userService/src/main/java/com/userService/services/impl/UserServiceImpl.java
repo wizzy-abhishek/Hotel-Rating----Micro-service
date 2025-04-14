@@ -6,6 +6,8 @@ import com.userService.entities.Users;
 import com.userService.exceptions.ResourceException;
 import com.userService.repo.UserRepo;
 import com.userService.services.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,13 +44,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+ //   @Retry(name = "getAllUserRetry")
+    @CircuitBreaker(name = "getAllUserCircuitBreaker" , fallbackMethod = "getAllUserFallBackCB")
     public List<Users> getAllUser() {
-
+        logger.info("get all user called");
         List<Users> users = userRepo.findAll();
 
         users.forEach(user -> {
 
-            // ff<List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
+            // <List<Hotel>> responseType = new ParameterizedTypeReference<>() {};
 
             List<Hotel> hotelsByUser = hotelClient.getHotelByUserId(user.getUserId());
 
@@ -64,6 +68,11 @@ public class UserServiceImpl implements UserService {
         });
 
         return users;
+    }
+
+    public List<Users> getAllUserFallBackCB(Throwable throwable) {
+        logger.error("get all user not working \n\"CB CALLED \": {}" , throwable.getMessage());
+        return List.of();
     }
 
     @Override
