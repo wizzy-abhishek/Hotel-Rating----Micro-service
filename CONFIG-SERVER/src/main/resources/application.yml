@@ -3,8 +3,8 @@ spring:
     name: CONFIG-SERVER
   security:
     user:
-      name: Abhishek
-      password: Abhishek
+      name: ConfigServer
+      password: ConfigServer
   cloud:
     config:
       server:

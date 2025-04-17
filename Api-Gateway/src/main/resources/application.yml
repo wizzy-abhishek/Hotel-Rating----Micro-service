@@ -10,8 +10,8 @@ spring:
 
   cloud:
     config:
-      username: Abhishek
-      password: Abhishek
+      username: ConfigServer
+      password: ConfigServer
     gateway:
       routes:
         - id: USER-SERVICE
@@ -23,8 +23,14 @@ spring:
           uri: lb://HOTEL-SERVICE
           predicates:
             - Path=/hotel/**
+          filters:
+            - name: AuthFilter
 
         - id: RATING-SERVICE
           uri: lb://RATING-SERVICE
           predicates:
             - Path=/rating/**
+          filters:
+            - name: AuthFilter
+
+jwtKey: 416as541ca4d8c14c46v4fv49f8419ws1r99c1sv91881cv98w1cv891v1ev9e8v4e98v14e91s56vfs

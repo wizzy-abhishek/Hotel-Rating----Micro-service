@@ -12,8 +12,8 @@ spring:
 
   cloud:
     config:
-      username: Abhishek
-      password: Abhishek
+      username: ConfigServer
+      password: ConfigServer
 
   config:
     import: optional:configserver:http://localhost:8080
