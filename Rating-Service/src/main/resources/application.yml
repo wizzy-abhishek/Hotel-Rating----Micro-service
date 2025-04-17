@@ -4,10 +4,16 @@ server:
 spring:
   application:
     name: RATING-SERVICE
+
   data:
     mongodb:
       uri: mongodb://localhost:27017
       database: microservice-rating
+
+  cloud:
+    config:
+      username: Abhishek
+      password: Abhishek
 
   config:
     import: optional:configserver:http://localhost:8080

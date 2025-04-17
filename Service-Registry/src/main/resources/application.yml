@@ -1,9 +1,19 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: service-registry
+  security:
+    user:
+      name: Abhishek
+      password: Abhishek
+
 eureka:
   instance:
     hostname: localhost
   client:
     register-with-eureka: false
     fetch-registry: false
-
-server:
-  port: 8761
+    service-url:
+      defaultZone: http://Abhishek:Abhishek@localhost:8761/eureka/

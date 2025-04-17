@@ -1,13 +1,16 @@
 spring:
   application:
-   name: CONFIG-SERVER
-
+    name: CONFIG-SERVER
+  security:
+    user:
+      name: Abhishek
+      password: Abhishek
   cloud:
     config:
       server:
-       git:
-         uri: https://github.com/wizzy-abhishek/micro-service----hotel-management
-         clone-on-start: true
+        git:
+          uri: https://github.com/wizzy-abhishek/micro-service----hotel-management
+          clone-on-start: true
 
 server:
   port: 8080
