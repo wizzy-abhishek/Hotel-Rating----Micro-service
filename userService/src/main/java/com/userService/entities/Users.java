@@ -1,14 +1,12 @@
 package com.userService.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import com.userService.dto.Hotel;
+import com.userService.entities.enums.Roles;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.LazyToOne;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
@@ -29,6 +27,12 @@ public class Users {
 
     @Column(nullable = false)
     private String email ;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Roles role ;
 
     private String about ;
 

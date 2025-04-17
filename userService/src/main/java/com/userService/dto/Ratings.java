@@ -1,4 +1,4 @@
-package com.userService.entities;
+package com.userService.dto;
 
 public record Ratings(String ratingId ,
                       int rating  ,

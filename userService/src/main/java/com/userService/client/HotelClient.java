@@ -1,6 +1,6 @@
 package com.userService.client;
 
-import com.userService.entities.Hotel;
+import com.userService.dto.Hotel;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

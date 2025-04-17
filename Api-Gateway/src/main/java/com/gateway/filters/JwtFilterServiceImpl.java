@@ -26,6 +26,6 @@ public class JwtFilterServiceImpl implements JwtFilterService{
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        return claims.getSubject();
+        return claims.get("userId" , String.class);
     }
 }

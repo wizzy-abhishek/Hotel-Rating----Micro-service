@@ -1,8 +1,5 @@
-package com.userService.entities;
+package com.userService.dto;
 
-import jakarta.persistence.Transient;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public record Hotel(String hotelId ,

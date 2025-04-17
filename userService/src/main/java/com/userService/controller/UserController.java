@@ -18,12 +18,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<Users> createUser(@RequestBody Users users){
-        Users userCreated = userService.saveUser(users);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
-    }
-
     @GetMapping("/{userId}")
     public ResponseEntity<Users> getUserById(@PathVariable String userId){
         Users user = userService.getUser(userId);

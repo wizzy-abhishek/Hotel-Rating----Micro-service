@@ -1,19 +1,17 @@
 package com.userService.services.impl;
 
 import com.userService.client.HotelClient;
-import com.userService.entities.Hotel;
+import com.userService.dto.Hotel;
 import com.userService.entities.Users;
 import com.userService.exceptions.ResourceException;
 import com.userService.repo.UserRepo;
 import com.userService.services.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -39,20 +37,6 @@ public class UserServiceImpl implements UserService {
         this.discoveryClient = discoveryClient;
         this.hotelClient = hotelClient;
     }
-
-    @Override
-    @RateLimiter(name = "writeOpsRateLimiter" , fallbackMethod = "writeOpsFallBack")
-    public Users saveUser(Users user) {
-        String uniqueId = UUID.randomUUID().toString() ;
-        user.setUserId(uniqueId);
-        return userRepo.save(user);
-    }
-
-    public Users writeOpsFallBack(Users user , Throwable throwable){
-        logger.error("Error in writing ops, rate limiter came in picture ");
-        return new Users();
-    }
-
 
     @Override
     @CircuitBreaker(name = "getAllUserCircuitBreaker" , fallbackMethod = "getAllUserFallBackCB")
