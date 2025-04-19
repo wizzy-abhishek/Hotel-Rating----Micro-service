@@ -2,6 +2,7 @@ package com.gateway.filters;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +20,12 @@ public class AuthFilterGatewayFilterFactory extends AbstractGatewayFilterFactory
     public GatewayFilter apply(Config config) {
 
         return (exchange, chain) -> {
-           /*
+
            if (exchange.getRequest().getMethod() == HttpMethod.GET
-                    && (exchange.getRequest().getURI().getPath().startsWith("/rating")
-                    || exchange.getRequest().getURI().getPath().startsWith("/hotel") )) {
+                    && (exchange.getRequest().getURI().getPath().startsWith("/hotel"))) {
                 return chain.filter(exchange);
             }
-            */
-            System.out.println("In the filter");
+
             String authHeader = exchange.getRequest()
                     .getHeaders()
                     .getFirst("Authorization");

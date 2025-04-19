@@ -1,16 +1,11 @@
 package com.userService.entities;
 
-import com.userService.dto.Hotel;
 import com.userService.entities.enums.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Lazy;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -35,9 +30,5 @@ public class Users {
     private Roles role ;
 
     private String about ;
-
-    @Lazy
-    @Transient
-    private List<Hotel> hotelsRated = new ArrayList<>() ;
 
 }

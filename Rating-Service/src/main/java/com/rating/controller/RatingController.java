@@ -19,7 +19,9 @@ public class RatingController {
     }
 
     @PostMapping
-    public ResponseEntity<Rating> createRating(@RequestBody Rating rating){
+    public ResponseEntity<Rating> createRating(@RequestBody Rating rating ,
+                                               @RequestHeader("X-User-Id") String userId){
+        rating.setUserId(userId);
         Rating rated = ratingService.createRating(rating);
         return ResponseEntity.status(HttpStatus.CREATED).body(rated);
     }

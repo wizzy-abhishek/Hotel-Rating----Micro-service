@@ -1,8 +1,7 @@
 package com.userService.controller;
 
-import com.userService.entities.Users;
+import com.userService.dto.UserResponseDTO;
 import com.userService.services.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +18,14 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Users> getUserById(@PathVariable String userId){
-        Users user = userService.getUser(userId);
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String userId){
+        UserResponseDTO user = userService.getUser(userId);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping
-    public ResponseEntity<List<Users>> getAllUsers(){
-        List<Users> users = userService.getAllUser();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
+        List<UserResponseDTO> users = userService.getAllUser();
         return ResponseEntity.ok(users);
     }
 

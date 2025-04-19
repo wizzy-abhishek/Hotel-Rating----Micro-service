@@ -53,8 +53,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService{
                 signUp.email() ,
                 signUp.password() ,
                 Roles.valueOf(signUp.role()) ,
-                signUp.about(),
-                null);
+                signUp.about());
 
         toBeCreatedUser.setPassword(passwordEncoder.encode(toBeCreatedUser.getPassword()));
         Users savingUser = userRepo.save(toBeCreatedUser);

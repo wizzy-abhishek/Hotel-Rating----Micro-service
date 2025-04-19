@@ -1,14 +1,15 @@
 package com.userService.services;
 
+import com.userService.dto.UserResponseDTO;
 import com.userService.entities.Users;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<Users> getAllUser();
+    List<UserResponseDTO> getAllUser();
 
-    Users getUser(String userId);
+    UserResponseDTO getUser(String userId);
 
 
 }
