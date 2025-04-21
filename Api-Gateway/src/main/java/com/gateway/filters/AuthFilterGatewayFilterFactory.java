@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthFilterGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthFilterGatewayFilterFactory.Config> {
 
-    private final JwtFilterService jwtFilterService;
+    private final JwtFilterService jwtFilterService ;
 
     public AuthFilterGatewayFilterFactory(JwtFilterService jwtFilterService) {
         super(Config.class);

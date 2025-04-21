@@ -2,10 +2,8 @@ package com.userService.services.authentication;
 
 import com.userService.dto.LoginCreds;
 import com.userService.dto.LoginResponseDTO;
-import com.userService.dto.SignUp;
 
-public interface AuthService {
+public interface AuthLoginService {
 
-    LoginResponseDTO signUp(SignUp signUp);
-
+    LoginResponseDTO login(LoginCreds loginCreds);
 }

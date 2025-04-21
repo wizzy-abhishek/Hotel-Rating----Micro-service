@@ -1,5 +1,6 @@
 package com.userService.services.authentication;
 
+import com.userService.dto.LoginCreds;
 import com.userService.dto.LoginResponseDTO;
 import com.userService.dto.SignUp;
 import com.userService.entities.Users;
@@ -11,6 +12,7 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
